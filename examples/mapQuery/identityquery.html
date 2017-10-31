@@ -1,0 +1,291 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Tiled ArcGIS MapServer</title>
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.12.1/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.12.1/build/ol.js"></script>
+    <script src="jquery-1.8.0.min.js"></script>
+</head>
+<body>
+<div style="position:absolute;top:20px;right:10px;z-index:999">
+
+    <button onclick="iQuery()">I查询</button>
+    &nbsp;&nbsp;
+    <button onclick="boxQuery()">拉框查询</button>
+</div>
+<div id="map" class="map"></div>
+<script>
+    var projection = ol.proj.get('EPSG:4326');
+    var urlTemplate = 'http://211.101.37.251:6080/arcgis/rest/services/jxgxptmap_2015ncyw/MapServer/tile/{z}/{y}/{x}';
+    var mapserver = 'http://192.168.0.87:7002/mapserver';
+    var tmpExtent_ = ol.extent.createEmpty();
+    var tileGrid = new ol.tilegrid.TileGrid({
+        origin     : [-400, 400],
+        extent     : [59.01797971556523, 1.694325360347264, 154.99881037726752, 56.86146079919307],
+        resolutions: [
+            0.0624062618086491,
+            0.04394531353227711,
+            0.021972656766138556,
+            0.010986328383069278,
+            0.005493164191534639,
+            0.0027465809060368165,
+            0.0013732916427489112,
+            6.866458213744556E-4,
+            3.433229106872278E-4,
+            1.716614553436139E-4,
+            8.582953794130404E-5,
+            4.291595870115493E-5,
+            2.1457979350577466E-5,
+            1.0728989675288733E-5,
+            5.363305107141452E-6,
+            2.681652553570726E-6
+        ]
+    });
+    var tileArcGISXYZRest = new ol.source.XYZ({
+        tileGrid       : tileGrid,
+        projection     : 'EPSG:4326',
+        tileUrlFunction: function (tileCoord) {
+            var url = urlTemplate.replace('{z}', (tileCoord[0]).toString())
+                    .replace('{x}', tileCoord[1].toString())
+                    .replace('{y}', (-tileCoord[2] - 1).toString());
+            return url;
+        }
+    });
+
+    var layers = [
+        new ol.layer.Tile({
+            source: tileArcGISXYZRest
+        })
+    ];
+    var view = new ol.View({
+        center    : [109.15169990462329, 31.74108365827285],
+        zoom      : 4,
+        projection: projection,
+        extent    : [60.896230706385204, 0.9508582428290315, 157.40716910286136, 62.53130907371668]
+    });
+    var map = new ol.Map({
+        layers: layers,
+        target: 'map',
+        view  : view
+    });
+    var wkt = 'POLYGON ((115.918204347911 28.310377140150706, 115.918204347911 28.35432247271865, 115.96214968047889 28.35432247271865, 115.96214968047889 28.310377140150706, 115.918204347911 28.310377140150706))';
+
+    var format = new ol.format.WKT();
+
+    var feature = format.readFeature(wkt, {
+        dataProjection   : 'EPSG:4326',
+        featureProjection: 'EPSG:4326'
+    });
+    var image = new ol.style.Circle({
+        radius: 7,
+        fill  : new ol.style.Fill({
+            color: '#ffcc33'
+        })
+    });
+    var styles = {
+        'Point'             : new ol.style.Style({
+            image: image
+        }),
+        'LineString'        : new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'green',
+                width: 3
+            })
+        }),
+        'MultiLineString'   : new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'green',
+                width: 3
+            })
+        }),
+        'MultiPoint'        : new ol.style.Style({
+            image: image
+        }),
+        'MultiPolygon'      : new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'yellow',
+                width: 1
+            }),
+            fill  : new ol.style.Fill({
+                color: 'rgba(255, 255, 0, 0.1)'
+            })
+        }),
+        'Polygon'           : new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color   : 'blue',
+                lineDash: [4],
+                width   : 3
+            }),
+            fill  : new ol.style.Fill({
+                color: 'rgba(0, 0, 255, 0.1)'
+            })
+        }),
+        'GeometryCollection': new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'magenta',
+                width: 2
+            }),
+            fill  : new ol.style.Fill({
+                color: 'magenta'
+            }),
+            /*image: new ol.style.Circle({
+             radius: 10,
+             fill: null,
+             stroke: new ol.style.Stroke({
+             color: 'magenta'
+             })
+             })*/
+            image : image
+        }),
+        'Circle'            : new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'red',
+                width: 2
+            }),
+            fill  : new ol.style.Fill({
+                color: 'rgba(255,0,0,0.2)'
+            })
+        })
+    };
+    var styleFunction = function (feature) {
+        return styles[feature.getGeometry().getType()];
+    };
+    var vectorLayer = new ol.layer.Vector({
+        style : styleFunction,
+        source: new ol.source.Vector({
+            features: [feature]
+        })
+    });
+    var dragBox = null;
+    var clickKey = null;
+    map.addLayer(vectorLayer);
+    window.setTimeout(function () {
+        //console.info(layers[0].getSource().getTileGridForProjection(projection));//.getTileCoordExtent([4,262,369])
+        var reuseZoomLevels = 2;
+        var zoomOffset      = 1;
+
+        // Calculation of tile urls
+        var resolutions = [];
+        var loads       = [{"level": 0, "resolution": 0.0624062618086491, "scale": 26227058}, {
+            "level"     : 1,
+            "resolution": 0.04394531353227711,
+            "scale"     : 18468600
+        }, {"level": 2, "resolution": 0.021972656766138556, "scale": 9234300}, {
+            "level"     : 3,
+            "resolution": 0.010986328383069278,
+            "scale"     : 4617150
+        }, {"level": 4, "resolution": 0.005493164191534639, "scale": 2308575}, {
+            "level"     : 5,
+            "resolution": 0.0027465809060368165,
+            "scale"     : 1154287
+        }, {"level": 6, "resolution": 0.0013732916427489112, "scale": 577144}, {
+            "level"     : 7,
+            "resolution": 6.866458213744556E-4,
+            "scale"     : 288572
+        }, {"level": 8, "resolution": 3.433229106872278E-4, "scale": 144286}, {
+            "level"     : 9,
+            "resolution": 1.716614553436139E-4,
+            "scale"     : 72143
+        }, {"level": 10, "resolution": 8.582953794130404E-5, "scale": 36071}, {
+            "level"     : 11,
+            "resolution": 4.291595870115493E-5,
+            "scale"     : 18036
+        }, {"level": 12, "resolution": 2.1457979350577466E-5, "scale": 9018}, {
+            "level"     : 13,
+            "resolution": 1.0728989675288733E-5,
+            "scale"     : 4509
+        }, {"level": 14, "resolution": 5.363305107141452E-6, "scale": 2254}, {
+            "level"     : 15,
+            "resolution": 2.681652553570726E-6,
+            "scale"     : 1127
+        }];
+        for (var i = 0; i < loads.length; i++) {
+            resolutions.push(loads[i]["resolution"]);
+        }
+        console.info(ol.tilegrid.createXYZ({
+            extent    : projection.getExtent(),
+            tileSize  : 256,
+            projection: projection
+        }).getResolutions())
+        var tileGrid = new ol.tilegrid.TileGrid({
+            origin     : [400, -400],
+            extent     : [59.01797971556523, 1.694325360347264, 154.99881037726752, 56.86146079919307],//ol.proj.get('EPSG:4326').getExtent(),
+            resolutions: resolutions
+        })
+        console.info(tileGrid.getTileCoordExtent([9, 283, 53]));
+    }, 1000);
+
+    function iQuery() {
+        if (dragBox != null) {
+            map.removeInteraction(dragBox);
+        }
+        clickKey = map.on("click", function (evt) {
+            var coordinate = evt.coordinate;
+            var resolution = view.getResolution();
+            var tolerance  = 5;
+            var geometry   = "POINT(" + coordinate[0] + " " + coordinate[1] + ")";
+            mapQuery(mapserver + "/mapserver/rest/mapserver/identity", {
+                resolution  : resolution,
+                tolerance   : tolerance,
+                geometry    : geometry,
+                identityType: "topmoust",
+                layers      : "[{name:'GIS_QL'},{name:'GIS_SD'},{name:'GIS_FWQ'},{name:'GIS_LX'}]"
+            });
+        });
+        console.info(clickKey);
+    }
+    function boxQuery() {
+        if (clickKey) {
+            map.unByKey(clickKey);
+            clickKey = null;
+        }
+        dragBox = new ol.interaction.DragBox();
+        map.addInteraction(dragBox);
+        dragBox.on('boxend', function (e) {
+            var wkt = new ol.format.WKT();
+            console.info(wkt);
+            var info = [];
+            // var extent = dragBox.getGeometry().getExtent();
+            var geometry   = wkt.writeGeometry(dragBox.getGeometry());
+            var resolution = view.getResolution();
+            mapQuery(mapserver + "/rest/mapserver/mapQuery", {
+                resolution  : resolution,
+                geometry    : geometry,
+                identityType: "all",
+                layers      : "[{name:'GIS_QL'}]"
+            });
+        });
+    }
+    function mapQuery(url, data) {
+        console.info(data);
+        $.ajax({
+            url    : url,
+            type   : "POST",
+            data   : data,
+            success: function (response) {
+                var format      = new ol.format.WKT();
+                var allFeatures = response;
+                var osFeatures  = [];
+                console.info(allFeatures);
+                for (var i = 0; i < allFeatures.length; i++) {
+                    var features = allFeatures[i];
+                    var feats    = features.features;
+                    for (var j = 0; j < feats.length; j++) {
+                        var feat     = feats[j];
+                        var geometry = feat["geometry"];
+                        var feature  = format.readFeature(geometry, {
+                            dataProjection   : 'EPSG:4326',
+                            featureProjection: 'EPSG:4326'
+                        });
+                        osFeatures.push(feature);
+                    }
+                }
+                vectorLayer.getSource().clear();
+                vectorLayer.getSource().addFeatures(osFeatures);
+
+            }
+        });
+    }
+</script>
+</body>
+</html>

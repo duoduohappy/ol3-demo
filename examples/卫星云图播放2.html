@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>卫星云图播放</title>
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.13.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="../css/product_player.css" type="text/css">
+    <meta charset="utf-8">
+<!--    <script src="http://openlayers.org/en/v3.13.0/build/ol.js"></script>
+    <script src="../lib/jquery-1.8.0.min.js"></script>-->
+</head>
+<body>
+<div class="wxyt_ft">
+
+    <div class="op">
+        <a class="a_play" href="javascript:void(0);" id="play_btn" title="播放" style="display: none;"></a>
+        <a class="a_prev" href="javascript:void(0);" onclick="wxyt.prev();" title="上一帧"><img
+                src="http://i.tq121.com.cn/i/radar/l.png"></a>
+        <a class="a_play1" href="javascript:void(0);" id="play_btn1" title="播放"><img
+                src="http://i.tq121.com.cn/i/satellite/play.png"></a><a class="a_next" href="javascript:void(0);"
+                                                                        onclick="wxyt.nextFrame();" title="下一帧"><img
+            src="http://i.tq121.com.cn/i/radar/r.png"></a></div>
+
+
+    <dl class="clearfix slitu" id="slitu">
+
+        <dd class="slide_box">
+            <p class="slide" id="sld"><span class="lt"></span><span class="rt"></span></p>
+
+            <p class="slide_cur" id="slide_cur" style="width: 430px;"><span class="lt"></span><span class="rt"></span>
+            </p>
+            <span class="slide_btn" id="slide_btn" style="left: 430px;"><em id="slb" style="display: block;">03月28日15时45分</em></span>
+        </dd>
+
+    </dl>
+    <div class="set">
+        <a href="javascript:void(0)"><img src="http://i.tq121.com.cn/i/radar/set1.png"></a><a href="javascript:vodi(0)"><img
+            src="http://i.tq121.com.cn/i/radar/fd.png" id="fd"><img src="http://i.tq121.com.cn/i/radar/sx.png" id="sx"
+                                                                    style="display:none"></a>
+    </div>
+
+
+</div>
+</body>
+</html>

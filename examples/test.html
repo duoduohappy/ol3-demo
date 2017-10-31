@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>叠加流量</title>
+    <link rel='stylesheet' href='http://www.sxgsyh.com/map/api/js/esri/css/esri.css'>
+    <link rel='stylesheet' href='http://www.sxgsyh.com/map/api/js/dojo/dijit/themes/tundra/tundra.css'>
+    <script rel='stylesheet' src='http://www.sxgsyh.com/map/api/init.js'></script>
+
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+    <script>
+        var map, lineReferenceLayer;
+        function init() {
+            //创建地图对象
+            require(["esri/map",
+                "esri/layers/ArcGISDynamicMapServiceLayer",
+                "esri/geometry/Polyline",
+                "esri/symbols/SimpleLineSymbol",
+                "esri/Graphic",
+                "esri/Color",
+                "dojo/domReady!"], function (Map, ArcGISDynamicMapServiceLayer, Polyline, SimpleLineSymbol, Graphic, Color) {
+                var map = new Map('map', {
+                    slider: true,
+                    sliderStyle: 'large',
+                    logo: false
+                });
+                var layer = new ArcGISDynamicMapServiceLayer('http://211.101.37.251:6080/arcgis/rest/services/JIANGXIYX/gdb_JX_YXMAP3/MapServer');
+                map.addLayer(layer);
+                var slsRed = new SimpleLineSymbol(
+                        SimpleLineSymbol.STYLE_DASH,
+                        new Color([255, 0, 0]),
+                        3
+                );
+                var slsGreen = new SimpleLineSymbol(
+                        SimpleLineSymbol.STYLE_DASH,
+                        new Color([0, 255, 0]),
+                        3
+                );
+                $.ajax({
+                    url: appConfig.mapserver + "/rest/mapserver/mapQuery",
+                    type: "post",
+                    data: requestData,
+                    success: function (response) {
+                        $(response.data).each(function (index, json) {
+                            var polyLine = new Polyline(json);
+                            polyLine = new Polyline(json);
+                            if (json.red) {
+                                map.graphics.add(new Graphic(polyLine, slsRed));
+                            } else {
+                                map.graphics.add(new Graphic(polyLine, slsGreen));
+                            }
+                        });
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+
+            });
+        }
+        function loadLayer(layerDefs) {
+            removeLayer();
+            if (llLayer) {
+                return;
+            }
+            llLayer = new esri.layers.ArcGISDynamicMapServiceLayer("http://211.101.37.251:6080/arcgis/rest/services/SHANXI_GGJ/SXJTLL/MapServer");
+            if (layerDefs) {
+                llLayer.setLayerDefinitions(layerDefs);//设置图层过滤条件，不设置默认加载全部数据
+            }
+            map.addLayer(llLayer);
+        }
+        function loadLayerByDefs() {
+            removeLayer();
+            var layerDefs = [];
+            /**
+             填写图层数据的过滤条件 0表示图的的编号 ，图层编号和所有字段可以通过对应的服务查看
+             过滤条件请参考SQL语法
+             **/
+            layerDefs[0] = "GUID='S85_1' AND FROM_M=50 AND TO_M=200";
+            loadLayer(layerDefs);
+        }
+        function removeLayer() {
+            if (!llLayer) {
+                return;
+            }
+            map.removeLayer(llLayer);
+            llLayer = null;
+        }
+        dojo.addOnLoad(init);
+    </script>
+</head>
+
+<body class="tundra">
+<div style="position: absolute;right: 20px;z-index: 100">
+    <button onclick="loadLayer()">叠加流量</button>
+    <button onclick="loadLayerByDefs()">显示指定路线流量</button>
+    <button onclick="removeLayer()">隐藏流量</button>
+</div>
+<div id="map"></div>
+</body>
+
+</html>

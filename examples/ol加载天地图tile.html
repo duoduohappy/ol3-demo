@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ol3加载天地图本地切片</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.13.0/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.13.0/build/ol.js"></script>
+</head>
+<body>
+<div id="map" class="map"></div>
+<script>
+    var projection = ol.proj.get('EPSG:4326');
+    var tileUrl = "http://localhost:51289/ol3-demos/hangzhoutiles16";
+    var origin = [-180, 90];
+    var resolutions = [
+        0.17578125,
+        0.087890625,
+        0.0439453125,
+        0.02197265625,
+        0.010986328125,
+        0.0054931640625,
+        0.00274658203125,
+        0.001373291015625,
+        0.0006866455078125,
+        0.00034332275390625,
+        0.000171661376953125,
+        8.58306884765625E-05,
+        4.29153442382813E-05,
+        2.14576721191406E-05
+    ];
+    var fullExtent = [118.351441, 29.194759, 120.728369, 30.572175];
+    var tileGrid = new ol.tilegrid.TileGrid({
+        tileSize   : 256,
+        origin     : origin,
+        extent     : fullExtent,
+        resolutions: resolutions
+    });
+    var urlTemplate = tileUrl + "/tiles/{z}/{y}/{x}.png";
+    var tileArcGISXYZ = new ol.source.XYZ({
+        tileGrid       : tileGrid,
+        projection     : projection,
+        tileUrlFunction: function (tileCoord) {
+            var url = urlTemplate.replace('{z}', (tileCoord[0] + 3).toString())
+                    .replace('{y}', tileCoord[1].toString())
+                    .replace('{x}', (-tileCoord[2] - 1).toString());
+            return url;
+        }
+    });
+
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: tileArcGISXYZ
+            })
+        ],
+        view  : new ol.View({
+            center    : [119.72, 30.32],
+            zoom      : 8,
+            projection: projection,
+            extent    : [118.351441, 29.194759, 120.728369, 30.572175]
+        })
+    });
+</script>
+</body>
+</html>

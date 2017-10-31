@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SVGMarker</title>
+    <link rel="stylesheet" href="../lib/ol.css" type="text/css">
+    <script src="../lib/ol.js"></script>
+    <script src="../lib/jquery-1.8.0.min.js"></script>
+
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <path d="M595 -11q-35 -36 -58 -46.5t-47.5 -0.5t-60.5 47q-37 40 -83.5 90.5t-67.5 73.5t-49 57t-38.5 55t-22 53t-15 64.5t-3.5 78.5q0 100 48.5 185.5t132 135.5t181.5 50t181.5 -50t132 -135.5t48.5 -185.5q0 -35 -1.5 -60.5t-8.5 -53t-11.5 -44t-22 -44t-28.5 -43.5t-42 -51
+t-52 -57t-67 -71q-30 -31 -46 -48z"/>
+</svg>
+<div id="map"></div>
+</body>
+</html>
+<!--
+<script>
+    var projection = ol.proj.get('EPSG:4326');
+    var tileUrl = "http://211.101.37.251:6080/arcgis/rest/services/jxgxptmap2015qs/MapServer";
+
+    $.ajax({
+        url: tileUrl + "?f=pjson",
+        dataType: "json",
+        success: function (data) {
+            var resolutions = [];
+            var origin = [data.tileInfo.origin.x, data.tileInfo.origin.y];
+            var len = data.tileInfo.lods.length;
+            var fullExtent = [data.fullExtent.xmin, data.fullExtent.ymin, data.fullExtent.xmax, data.fullExtent.ymax];
+            for (var i = 0; i < len; i++) {
+                resolutions.push(data.tileInfo.lods[i].resolution);
+            }
+            var tileGrid = new ol.tilegrid.TileGrid({
+                tileSize: data.tileInfo.cols,
+                origin: origin,
+                extent: fullExtent,
+                resolutions: resolutions
+            });
+            var urlTemplate = tileUrl + "/tile/{z}/{y}/{x}";
+            var tileArcGISXYZ = new ol.source.XYZ({
+                tileGrid: tileGrid,
+                projection: projection,
+                tileUrlFunction: function (tileCoord) {
+                    var url = urlTemplate.replace('{z}', (tileCoord[0]).toString())
+                            .replace('{x}', tileCoord[1].toString())
+                            .replace('{y}', (-tileCoord[2] - 1).toString());
+                    return url;
+                }
+            });
+
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: tileArcGISXYZ
+                    })
+                ],
+                view: new ol.View({
+                    center: [116.15169990462329, 27.74108365827285],
+                    zoom: 8,
+                    projection: projection,
+                    extent: [60.896230706385204, 0.9508582428290315, 157.40716910286136, 62.53130907371668]
+                })
+            });
+            var coordinate = [116.15169990462329, 27.74108365827285];
+
+
+            // 构建svg的Image对象
+
+/*
+            var svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+                    'width="20px" height="20px"> ' +
+                    ' <circle cx="10" cy="10" r="10" fill="red" stroke="red" stroke-width="1"> ' +
+                    '<animate attributeName="r" from="0" to="10" dur="1s" repeatCount="indefinite" />' +
+                    '</circle>' +
+                    '</svg>';*/
+            var svg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+                    '<path d="M595 -11q-35 -36 -58 -46.5t-47.5 -0.5t-60.5 47q-37 40 -83.5 90.5t-67.5 73.5t-49 57t-38.5 55t-22 53t-15 64.5t-3.5 78.5q0 100 48.5 185.5t132 135.5t181.5 50t181.5 -50t132 -135.5t48.5 -185.5q0 -35 -1.5 -60.5t-8.5 -53t-11.5 -44t-22 -44t-28.5 -43.5t-42 -51 t-52 -57t-67 -71q-30 -31 -46 -48z" ' +
+                    'style="stroke:#48660c; fill:#47661b;"/>' +
+                    '</svg>';
+
+            var mySvg = new Image();
+            mySvg.src = 'data:image/svg+xml,' + decodeURI(svg);
+
+            var svgFeature = new ol.Feature({
+                geometry: new ol.geom.Point(coordinate)
+            });
+            var style = new ol.style.Style({
+                image: new ol.style.Icon({
+                    img: mySvg,    // 设置Image对象
+                    imgSize: [20, 20]    // 及图标大小
+                })
+            });
+
+            svgFeature.setStyle(style);
+
+            var vectorSource = new ol.source.Vector({
+                features: [svgFeature]
+            });
+            var vectorLayer = new ol.layer.Vector({
+                source: vectorSource
+            });
+
+            map.addLayer(vectorLayer);
+
+/*            setInterval(function () {
+                map.renderSync();
+            }, 100);*/
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+</script>-->

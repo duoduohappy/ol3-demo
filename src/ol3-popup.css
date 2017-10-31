@@ -1,0 +1,100 @@
+/*气泡弹窗*/
+.ol-popup {
+    position: absolute;
+    cursor: default;
+    border: 1px solid rgb(153, 153, 153);
+    width: 245px;
+    background-color: rgb(255, 255, 255);
+}
+
+
+.ol-popup-center {
+    z-index: 3;
+    position: relative;
+    /*width: 345px;*/
+}
+
+.ol-popup-content {
+    /*width: 345px;*/
+    /*    height: 204px;*/
+    overflow: hidden;
+}
+
+.ol-popup .ol-popup-title {
+    line-height: 30px;
+    height: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    /*width: 345px;*/
+    background-color: rgb(249, 249, 249);
+}
+
+.ol-popup .ol-popup-title .iw_poi_title {
+    font-size: 14px;
+    color: #4d4d4d;
+    padding-left: 11px;
+    font-weight: 700;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: 0;
+}
+
+.ol-popup-closer {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 120%;
+    padding: 0 4px;
+    color: gray;
+    text-decoration: none;
+}
+
+.ol-popup-closer:after {
+    content: "\2716";
+}
+
+.ol-popup-closer:hover {
+    color: blue;
+}
+
+.ol-popup div.infoResult {
+    min-width: 130px;
+}
+
+.ol-popup div.infoResult p {
+    padding: 0.1em;
+    margin: 0;
+}
+
+.ol-popup-content h3 {
+    margin: 0.25em 0;
+}
+
+.ol-popup.marker {
+    margin-bottom: 30px;
+}
+/*气泡弹窗结束*/
+.userSignIwBox{
+    margin: 8px 0 0 15px;
+    color: #333;
+}
+
+.iw_bt_over {
+    background-position: -52px -87px
+}
+
+.iw_bt_down {
+    background-position: -104px -87px;
+    font-weight: 700
+}
+
+.iw_bt,.iw_bt_down,.iw_bt_over {
+    width: 48px;
+    height: 26px;
+    line-height: 18px;
+    border: 0;
+    padding: 0;
+    vertical-align: middle;
+    cursor: pointer;
+    background: url(http://webmap2.map.bdstatic.com/wolfman/static/common/images/iw_bg_c0a8cf8.png) no-repeat 0 -87px}

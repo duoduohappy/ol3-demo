@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        @-webkit-keyframes twinkling{	/*透明度由0到1*/
+            0%{
+                opacity:0;				/*透明度为0*/
+            }
+            100%{
+                opacity:1;				/*透明度为1*/
+            }
+        }
+        .circle {
+            stroke-width: 59;
+            stroke-linecap: round;
+            -webkit-animation: twinkling 1s infinite ease-in-out;
+        }
+
+        .circle:hover {
+            stroke-width: 71;
+        }
+
+        svg {
+            /* Make the white circle visible */
+            background-color: black;
+
+            /* Make the svg cover the whole area */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+    </style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <line x1="168" y1="179" x2="168" y2="179" stroke="red" class="circle"/>
+</svg>
+</body>
+</html>

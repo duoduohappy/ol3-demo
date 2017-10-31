@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/product_player.css">
+</head>
+<body>
+<div class="container" id="mainContainer" style="position:absolute; left: 50%;    margin-left: -501px;top:250px;">
+    <div class="wrap" id="wrap">
+        <div class="colspan2 clearfix">
+            <div class="fleft">
+                <div class="module module-media">
+
+                    <div id="meta">
+
+                        <div class="speed" id="wxyt_speed">
+
+                            <input name="100" type="button" value="快速">
+
+                            <input name="500" type="button" value="中速" class="move" checked="">
+
+                            <input name="1000" type="button" value="慢速">
+
+                        </div>
+
+                        <div class="wxyt_ft">
+
+                            <div class="op">
+                                <a class="a_play" href="javascript:void(0);" id="play_btn" title="播放"
+                                   style="display: none;"></a>
+                                <a class="a_prev" href="javascript:void(0);" onclick="wxyt.prev();" title="上一帧"><img
+                                        src="http://i.tq121.com.cn/i/radar/l.png"></a>
+                                <a class="a_play1" href="javascript:void(0);" id="play_btn1" title="播放"><img
+                                        src="http://i.tq121.com.cn/i/satellite/play.png"></a><a class="a_next"
+                                                                                                href="javascript:void(0);"
+                                                                                                onclick="wxyt.nextFrame();"
+                                                                                                title="下一帧"><img
+                                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAbCAYAAAEL2J9OAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUJJREFUeNpi/P//PwMMMEHpaiD+zwiVARMsUBlGEAEQQDAZsPr/yBrBDLAagABiRDYXCv7DTEGRgen1hGoFawcIIGzawSqXoguCVP5Hdh2Ke6CWhUNYCKAO0gTCLOhaUXyBDAACCKuTsAEmJItBmBOLmv/orgSBb1CJb7hMRAcgk3ehmgvxFgzcgHkTCf/H6W10D+OzGgMABBDJwUO0Qn4c8v/RFX4A4l5i3AjT+ReI2aE0TByrr5mB+A8QZxIyERl8hLqdYDhqEwqeU1BTnuKLazNs8Ywc1yDdMgMThQQBQIARbTXVbSbHQJBTnwCxBwn6/2OkErS4+o+Wb82w5F1seuBi+AxEBieRyz9qGIgMtgOxNDUNBIEPQBxFqYHfgLiIUi//AeIWIGamNFKmATEngRgmaOBqIOYnwhC8Bg7+rAcAWZ3B1Zmx82YAAAAASUVORK5CYII="></a></div>
+
+
+                            <dl class="clearfix slitu" id="slitu">
+
+                                <dd class="slide_box">
+                                    <p class="slide" id="sld"><span class="lt"></span><span class="rt"></span></p>
+
+                                    <p class="slide_cur" id="slide_cur" style="width: 430px;"><span
+                                            class="lt"></span><span class="rt"></span></p>
+                                    <span class="slide_btn" id="slide_btn" style="left: 430px;"><em
+                                            style="display: block" id="slb">03月28日16时15分</em></span>
+                                </dd>
+
+                            </dl>
+                            <div class="set">
+                                <a href="javascript:void(0)"><img src="http://i.tq121.com.cn/i/radar/set1.png"></a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</div>
+</body>
+</html>
